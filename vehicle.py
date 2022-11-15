@@ -4,7 +4,7 @@ class Vehicle:
         self.name = name
         self.gas = gas
         self.pos = [] # Should be a 2d array. i.e pos [[x, y], [x,4]] ... Might not need        
-        self.move_dir = move_dir #Move vertical or horizontal 
+        self.move_dir = move_dir #Move vertical or horizontal.. Maybe this is decided at the end based on the position
         self.is_ambo = is_ambo; #Could sublcass but too much work at the moment
 
     def add_pos(x:int, y:int, map_:game_map.GameMap):
@@ -23,4 +23,8 @@ class Vehicle:
     
     def __str__(self):
         #Create a vehicle to gas string. Do not output if gas is 100. i.e "C3 B4 H1"
+        pass
+
+    def determin_move_direction(self):
+        #determin if the vehicle can move up or down based on all of it's parts
         pass
