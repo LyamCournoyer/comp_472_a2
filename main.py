@@ -5,7 +5,8 @@ def main():
     input_file = "sample_files\Sample\sample-input.txt"
     state_list = parse_input_file(input_file)
 
-    print(str(state_list.pop().get_map()))
+    for state_line in state_list:
+        print(state_line.get_map().__str__())
     # heuristic_list = list[heuristic.Heuristic]
     # heuristic_list.append(heuristic.h1())
 
@@ -17,9 +18,11 @@ def parse_input_file(file_path:str) -> list[state.State]:
         lines = file.readlines()
         for line in lines:
             # Is valid line?
-            if((not line.isspace()) and line[0]!="#"):
-                line = line.strip()
+            line = line.strip()
+            if(line and not line.startswith('#')):                
                 valid_lines.append(state.State(line))
+            
+
     
     return valid_lines
 

@@ -1,7 +1,7 @@
 import vehicle
 import math
 class GameMap:
-    def __init__(self, size:int, vehicle_list:list[vehicle.Vehicle]):
+    def __init__(self, size:int, vehicle_list):
         self.x_len = int(math.sqrt(size))
         self.y_len = int(math.sqrt(size))
         self.vehicle_list = vehicle_list
@@ -29,7 +29,7 @@ class GameMap:
                 
         pass
     def __str__(self):
-        # create an input map string  i.e AAABCDFEEBCDF.RRC.GGH....IH.KK.IJJLL 
+        # create an input map string  i.e AAABCDFEEBCDF.RRC.GGH....IH.KK.IJJLL
         string = ""
         for row in range(self.x_len):
             for col in range(self.y_len):
