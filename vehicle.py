@@ -18,17 +18,32 @@ class Vehicle:
     def get_name(self):
         return self.name
 
-    def move(self, n:int):
+
+    def move_dir_to_str(self, n):
         move_dir = self.determine_move_direction()
+        if n > 0 and move_dir[0]==1:
+            return 'right'
+        elif n < 0 and move_dir[0]==1:
+            return 'left'
+        elif n > 0 and move_dir[1]==1:
+            return 'down'
+        else:
+            return 'up'
+
+    def get_pos_list_if_moved(self, n:int):
+        move_dir = self.determine_move_direction()
+        new_positions = []
         for loc in self.pos:
             #loc[0] is x, loc[1] is y
-            
-            loc[0] = loc[0] + n * move_dir[0]
-            loc[1] = loc[1] + n * move_dir[1]
-            self.gas -= n
-        #accept positive or negative
-        #move base on move_dir... i.e down and left are negative, up and right are positve
-        #if the head tile can move then so can the rest
+            new_pos = []
+            new_pos.append(loc[0] + n * move_dir[0])
+            new_pos.append(loc[1] + n * move_dir[1])
+            new_positions.append(new_pos)
+        return new_positions
+
+    def move(self, n:int):
+        self.pos = self.get_pos_list_if_moved(n)
+        self.gas -= n
         
 
     def is_vehicle_complete(self):

@@ -26,8 +26,14 @@ class GameMap:
             if v.name == name:
                 v.move(times)
                 self.gen_map_2darray(self)
-                
-        pass
+    
+    def can_vehicle_move(self, name:str, times:int):
+        for v in self.vehicle_list:
+            if v.name == name:
+                new_position_list = v.get_pos_list_if_moved(times)
+                #TODO check bounds and for other vehicles
+        return True
+        
     def __str__(self):
         # create an input map string  i.e AAABCDFEEBCDF.RRC.GGH....IH.KK.IJJLL
         string = ""
