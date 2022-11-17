@@ -7,6 +7,7 @@ class TestHeuristics(unittest.TestCase):
         {'name':  "IIB...C.BHHHC.AAD.....D.EEGGGF.....F", 'h1_expected':1, 'h2_expected': 1,},
         {'name':  "C.B...C.BHHHAADD........EEGGGF.....F", 'h1_expected':1, 'h2_expected': 2},
         {'name':  "...GF...BGF.AABCF....CDD...C....EE..", 'h1_expected':3, 'h2_expected': 3},
+        {'name': ".......C.BHHHC...AA...D.EEGGGF.....F", 'h1_expected':0, 'h2_expected': 0,},
        
     ]
     for e in STATES_TO_TEST:
