@@ -31,7 +31,14 @@ class GameMap:
         for v in self.vehicle_list:
             if v.name == name:
                 new_position_list = v.get_pos_list_if_moved(times)
-                #TODO check bounds and for other vehicles
+                for pos in new_position_list:
+                    x = pos[0]
+                    y = pos[1]
+
+                    if (x < 0 or x >= self.x_len) or (y < 0 or y >= self.y_len):
+                        return False
+                    if self.map_array[x][y] != '.' and self.map_array[x][y] != v.name:
+                        return False
         return True
         
     def __str__(self):
@@ -41,4 +48,7 @@ class GameMap:
             for col in range(self.y_len):
                 string+=self.map_array[row][col]
 
+        for v in self.vehicle_list:
+            if v.gas != 100:
+                string = '{} {}{}'.format(string, v.name, v.gas)
         return str(string)

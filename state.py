@@ -4,6 +4,7 @@ import vehicle
 
 class State:
     
+    MOVES_TO_MAKE = [-1, 1]
     """
     
     """
@@ -30,7 +31,16 @@ class State:
                 ind+=1
 
         self.vehicle_list = list(cars.values())
-       
+        
+        #Set gas
+        gas_list = line.split()[1:]
+        for entry in gas_list:
+            car_name = entry[0]
+            gas = int(entry[1:])
+            for v in self.vehicle_list:
+                if v.name == car_name:
+                    v.gas = gas
+
         # generate a map for this state
         self.game_map = game_map.GameMap(State.MAP_SIZE*State.MAP_SIZE, self.vehicle_list)
         pass
@@ -44,28 +54,31 @@ class State:
 
     def get_move_list(self):
         move_list = []
-        times_to_move = [-1, 1]
-        for spaces_to_move in times_to_move:
+        for spaces_to_move in State.MOVES_TO_MAKE:
             for vehicle_to_move in self.game_map.vehicle_list:
                 if self.game_map.can_vehicle_move(vehicle_to_move.name, spaces_to_move):
                     move = {}
                     move['vehicle_name:'] = vehicle_to_move.name
                     move['directrion'] = vehicle_to_move.move_dir_to_str(spaces_to_move)
                     move['times'] = spaces_to_move
-                    move['new_state'] = self.gen_state_with_new_vehicle_pos(vehicle_to_move, vehicle_to_move.get_pos_list_if_moved(spaces_to_move))
+                    move['new_state'] = self.gen_state_with_new_vehicle_pos(vehicle_to_move, spaces_to_move)
                     move_list.append(move)
         return move_list
                 
         
-    def gen_state_with_new_vehicle_pos(self, vehicle_to_move, new_positions):
+    def gen_state_with_new_vehicle_pos(self, vehicle_to_move, spaces_to_move):
         tmp_v_list = []
         
         for v in self.vehicle_list:
             if v.name == vehicle_to_move.name:
                 tmp_v = vehicle.Vehicle(v.name)
-                tmp_v_list.append(tmp_v)
-                for pos in new_positions:
+                
+                for pos in v.pos:
                     tmp_v.add_pos(pos[0], pos[1])
+                tmp_v.gas = v.gas
+                tmp_v.move(spaces_to_move)
+                tmp_v_list.append(tmp_v)
+                
             else: 
                 tmp_v_list.append(v)
         
