@@ -4,7 +4,8 @@ import vehicle
 
 class State:
     
-    MOVES_TO_MAKE = [-1, 1]
+    MOVES_TO_MAKE = [-3, 3]
+    EXIT_POSITION = [2, 5]
     """
     
     """
@@ -65,7 +66,7 @@ class State:
                     move_list.append(move)
         return move_list
                 
-        
+   
     def gen_state_with_new_vehicle_pos(self, vehicle_to_move, spaces_to_move):
         tmp_v_list = []
         
@@ -77,9 +78,19 @@ class State:
                     tmp_v.add_pos(pos[0], pos[1])
                 tmp_v.gas = v.gas
                 tmp_v.move(spaces_to_move)
-                tmp_v_list.append(tmp_v)
+
+                if not self.vehicle_can_leave(tmp_v):
+                    tmp_v_list.append(tmp_v)
                 
             else: 
                 tmp_v_list.append(v)
         
         return game_map.GameMap(State.MAP_SIZE*State.MAP_SIZE, tmp_v_list).__str__()
+ 
+    def vehicle_can_leave(v):
+        for pos in v.get_positions:
+            # Vehicle must be at exit and move left/right
+            if pos == State.EXIT_POSITION and v.determine_move_direction == [1,0]:
+                return True
+
+        return False
