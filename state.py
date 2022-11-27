@@ -63,10 +63,11 @@ class State:
                     move['directrion'] = vehicle_to_move.move_dir_to_str(spaces_to_move)
                     move['times'] = spaces_to_move
                     move['new_state'] = self.gen_state_with_new_vehicle_pos(vehicle_to_move, spaces_to_move)
+                    move['parent'] = self.get_map().__str__()
+                    move['cost'] = 1
                     move_list.append(move)
         return move_list
-                
-   
+                 
     def gen_state_with_new_vehicle_pos(self, vehicle_to_move, spaces_to_move):
         tmp_v_list = []
         
@@ -87,10 +88,10 @@ class State:
         
         return game_map.GameMap(State.MAP_SIZE*State.MAP_SIZE, tmp_v_list).__str__()
  
-    def vehicle_can_leave(v):
+    def vehicle_can_leave(v:vehicle.Vehicle):
         for pos in v.get_positions:
             # Vehicle must be at exit and move left/right
             if pos == State.EXIT_POSITION and v.determine_move_direction == [1,0]:
                 return True
 
-        return False
+        return False 
