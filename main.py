@@ -1,5 +1,7 @@
 import state
 import game_map
+import search_algo
+import heuristic
 
 def main():
     input_file = "sample_files\Sample\sample-input.txt"
@@ -7,7 +9,7 @@ def main():
     # heuristic_list = list[heuristic.Heuristic]
     # heuristic_list.append(heuristic.h1())
     for game in state_list:
-        # main loop here
+        run_a(state_list, [heuristic.h1])
         pass
     
 
@@ -28,11 +30,11 @@ def parse_input_file(file_path:str) -> list[state.State]:
     return valid_lines
 
 
-# def run_breadth_first(state_list:list[str], heuristic_list = list[heuristic.Heuristic]):
-#     for _heuristic in heuristic_list:
-#         for item in state_list:
-            
-#             algo = search_algo.BreadthFirst(state.State(item), _heuristic)
+def run_a(state_list, heuristic_list):
+    for _heuristic in heuristic_list:
+        for item in state_list:            
+            algo = search_algo.A(item, _heuristic)
+            algo.execute()
 
 if __name__ == "__main__":
     main()
