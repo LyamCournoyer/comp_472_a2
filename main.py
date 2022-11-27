@@ -4,11 +4,12 @@ import game_map
 def main():
     input_file = "sample_files\Sample\sample-input.txt"
     state_list = parse_input_file(input_file)
-
-    for state_line in state_list:
-        print(state_line.get_map().__str__())
     # heuristic_list = list[heuristic.Heuristic]
     # heuristic_list.append(heuristic.h1())
+    for game in state_list:
+        # main loop here
+        pass
+    
 
 
 

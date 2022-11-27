@@ -43,9 +43,9 @@ class Vehicle:
 
     def move(self, n:int):
         self.pos = self.get_pos_list_if_moved(n)
-        self.gas -= abs(n)
-        
+        self.gas -= abs(n)  
 
+    
     def is_vehicle_complete(self):
         #mainly for testing 
         #check that all positions are adjacent

@@ -1,6 +1,7 @@
 import vehicle
 import math
 class GameMap:
+
     def __init__(self, size:int, vehicle_list):
         self.x_len = int(math.sqrt(size))
         self.y_len = int(math.sqrt(size))
@@ -35,12 +36,12 @@ class GameMap:
                     x = pos[0]
                     y = pos[1]
 
-                    if (x < 0 or x >= self.x_len) or (y < 0 or y >= self.y_len):
+                    if (x < 0 or x >= self.x_len) or (y < 0 or y >= self.y_len) or (v.gas == 0):
                         return False
                     if self.map_array[x][y] != '.' and self.map_array[x][y] != v.name:
                         return False
         return True
-        
+
     def __str__(self):
         # create an input map string  i.e AAABCDFEEBCDF.RRC.GGH....IH.KK.IJJLL
         string = ""
