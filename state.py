@@ -4,7 +4,7 @@ import vehicle
 
 class State:
     
-    MOVES_TO_MAKE = [-3, 3]
+    MOVES_TO_MAKE = [-4, -3, -2 ,-1 , 1, 2, 3, 4]
     EXIT_POSITION = [2, 5]
     """
     
@@ -88,8 +88,8 @@ class State:
         
         return game_map.GameMap(State.MAP_SIZE*State.MAP_SIZE, tmp_v_list).__str__()
  
-    def vehicle_can_leave(v:vehicle.Vehicle):
-        for pos in v.get_positions:
+    def vehicle_can_leave(self, v:vehicle.Vehicle):
+        for pos in v.get_positions():
             # Vehicle must be at exit and move left/right
             if pos == State.EXIT_POSITION and v.determine_move_direction == [1,0]:
                 return True

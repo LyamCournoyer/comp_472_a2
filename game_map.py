@@ -21,6 +21,10 @@ class GameMap:
 
     def is_location_empty(self, x:int, y:int):
         pass
+    
+    def is_goal_reached(self):
+        return self.map_array[2][5] == 'A'
+
 
     def move_vehicle(self, name:str, times:int):
         for v in self.vehicle_list:
@@ -31,15 +35,24 @@ class GameMap:
     def can_vehicle_move(self, name:str, times:int):
         for v in self.vehicle_list:
             if v.name == name:
-                new_position_list = v.get_pos_list_if_moved(times)
-                for pos in new_position_list:
+                #new_position_list = v.get_pos_list_if_moved(times)
+                if v.gas < abs(times):
+                    return False
+                for pos in v.pos:
                     x = pos[0]
                     y = pos[1]
-
-                    if (x < 0 or x >= self.x_len) or (y < 0 or y >= self.y_len) or (v.gas == 0):
-                        return False
-                    if self.map_array[x][y] != '.' and self.map_array[x][y] != v.name:
-                        return False
+                    if times < 0:
+                        r =  range(times,0)
+                    else:
+                        r = range(1,times+1)
+                    for t in r:
+                        move_dir = v.determine_move_direction()
+                        new_x = x + t * move_dir[0]
+                        new_y = y + t * move_dir[1]
+                        if (new_x < 0 or new_x >= self.x_len) or (new_y < 0 or new_y >= self.y_len):
+                            return False
+                        if self.map_array[new_x][new_y] != '.' and self.map_array[new_x][new_y] != v.name:
+                            return False
         return True
 
     def __str__(self):
@@ -49,7 +62,7 @@ class GameMap:
             for col in range(self.y_len):
                 string+=self.map_array[row][col]
 
-        for v in self.vehicle_list:
+        for v in sorted(self.vehicle_list, key=lambda x: x.name):
             if v.gas != 100:
                 string = '{} {}{}'.format(string, v.name, v.gas)
         return str(string)
