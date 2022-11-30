@@ -17,14 +17,13 @@ class SearchAlgo():
     def execute(self):
         pass
 
-
 class UniformCost(SearchAlgo):
-    def __init__(self, _initial_state:state.State, _heuristic:heuristic.Heuristic):
+    def __init__(self, _initial_state:state.State):
         self.open_list = PriorityQueue()
         self.visited_list = list()
-        self.heuristic = _heuristic
         self.initial_state = _initial_state
         self.move_list = {}
+        self.state_count = 0
 
     def execute(self):
         # insert root node
@@ -38,10 +37,11 @@ class UniformCost(SearchAlgo):
             current_node = node_tuple[2]
             current_state = state.State(current_node['new_state'])
             current_cost = node_tuple[0]
+            current_state_str = current_state.game_map.stripped_map_string(current_node['new_state'])
             if current_state.is_goal_state():
                 # print info?
                 return self.gen_move_list(current_node)
-            elif current_node['new_state'] not in self.visited_list:
+            elif current_state_str not in self.visited_list:
                 self.move_list[current_node['new_state']] = current_node
                 # enqueue children with cost
                 for child in current_state.get_move_list():
@@ -49,7 +49,7 @@ class UniformCost(SearchAlgo):
                     entry_count +=1
                     self.open_list.put((priority, entry_count, child))
                 
-                self.visited_list.append(current_node['new_state'])
+                self.visited_list.append(current_state_str)
 
     def gen_move_list(self, finale_move):
         move = finale_move
@@ -63,23 +63,59 @@ class UniformCost(SearchAlgo):
           
         return move_list
 
-
-    def get_path():
-        # Use end goal node and can get parent until initial node
-        pass
+    def __str__(self):
+        return str('ucs') 
 
 class GreedyBestFirst(SearchAlgo):
+    def __init__(self, _initial_state:state.State, _heuristic:heuristic.Heuristic):
+        self.open_list = PriorityQueue()
+        self.visited_list = list()
+        self.initial_state = _initial_state
+        self.heuristic = _heuristic
+        self.move_list = {}
+
     def execute(self):
-        pass
+        # root node
+        entry_count = 0
+        self.open_list.put((0, entry_count, {'new_state':self.initial_state.get_map().__str__()}))
 
-    def get_path():
-        # Use end goal node and can get parent until initial node
-        pass
+        while not self.open_list.empty():
+            # pop
+            node_tuple = self.open_list.get()
+            current_node = node_tuple[2]
+            current_state = state.State(current_node['new_state'])
+            current_state_str = current_state.game_map.stripped_map_string(current_node['new_state'])
+            if current_state.is_goal_state():
+                # print info?
+                return self.gen_move_list(current_node)
+            elif current_state_str not in self.visited_list:
+                self.move_list[current_node['new_state']] = current_node
+                # enqueue children with heuristic
+                for child in current_state.get_move_list():
+                    priority = self.heuristic.get_heuristic(state.State(child['new_state']).get_map())
+                    entry_count +=1
+                    self.open_list.put((priority, entry_count, child))
+                
+                self.visited_list.append(current_state_str)
 
+    def gen_move_list(self, finale_move):
+        move = finale_move
+        move_list = []
+        while True:
+            if move['parent'] == self.initial_state.get_map().__str__():
+                move_list.insert(0,move)
+                break
+            move_list.insert(0,move)
+            move = self.move_list[move['parent']]
+          
+        return move_list
 
+    def __str__(self):
+        return str('gbfs')+self.heuristic.__str__() 
 
 class  A(SearchAlgo):
     def __init__(self, _initial_state:state.State, _heuristic:heuristic.Heuristic):
+        self.name = "a"
         self.open_list = {}
         self.closed_list =  {}
         self.move_list = {} #k:state, v:move
@@ -89,8 +125,6 @@ class  A(SearchAlgo):
         self.g_score[_initial_state.get_map().__str__()] = 0
         self.open_list[_initial_state.get_map().__str__()] = self.heuristic.get_heuristic(_initial_state.get_map())
       
-
-
     def execute(self):
         while self.open_list:
             self.open_list = {k: v for k, v in sorted(self.open_list.items(), key=lambda item: item[1])}
@@ -110,10 +144,7 @@ class  A(SearchAlgo):
                     self.move_list[move['new_state']] = move
                     self.g_score[move['new_state']] = tmp_g_score
                     self.open_list[move['new_state']] = tmp_g_score + self.heuristic.get_heuristic(state.State(move['new_state']).get_map())
-
-                    
         return None
-                    
                     
     def gen_move_list(self, finale_move):
         move = finale_move
@@ -126,15 +157,14 @@ class  A(SearchAlgo):
             move = self.move_list[move['parent']]
           
         return move_list
-
-                
-             
             
     def in_queue(self, str, queue):
         while not queue.empty():
             if str == queue.get():
                 return(True)
 
+    def __str__(self):
+        return str('a')+self.heuristic.__str__()
     
 
         

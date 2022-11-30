@@ -22,7 +22,7 @@ class GameMap:
     def is_location_empty(self, x:int, y:int):
         pass
     
-    def is_goal_reached(self):
+    def is_goal_reached(self): 
         return self.map_array[2][5] == 'A'
 
 
@@ -54,6 +54,9 @@ class GameMap:
                         if self.map_array[new_x][new_y] != '.' and self.map_array[new_x][new_y] != v.name:
                             return False
         return True
+
+    def stripped_map_string(self, map_str):
+        return map_str[0:(self.x_len*self.y_len)]
 
     def __str__(self):
         # create an input map string  i.e AAABCDFEEBCDF.RRC.GGH....IH.KK.IJJLL
