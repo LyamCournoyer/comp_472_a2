@@ -22,13 +22,13 @@ class Vehicle:
     def move_dir_to_str(self, n):
         move_dir = self.determine_move_direction()
         if n > 0 and move_dir[0]==1:
-            return 'right'
-        elif n < 0 and move_dir[0]==1:
-            return 'left'
-        elif n > 0 and move_dir[1]==1:
             return 'down'
-        else:
+        elif n < 0 and move_dir[0]==1:
             return 'up'
+        elif n > 0 and move_dir[1]==1:
+            return 'right'
+        else:
+            return 'left'
 
     def get_pos_list_if_moved(self, n:int):
         move_dir = self.determine_move_direction()
