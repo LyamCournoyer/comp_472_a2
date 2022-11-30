@@ -91,7 +91,10 @@ class State:
     def vehicle_can_leave(self, v:vehicle.Vehicle):
         for pos in v.get_positions():
             # Vehicle must be at exit and move left/right
-            if pos == State.EXIT_POSITION and v.determine_move_direction == [1,0]:
+            if pos == State.EXIT_POSITION and v.determine_move_direction == [1,0] and v.get_name() != "A":
                 return True
 
         return False 
+
+    def is_goal_state(self):
+        return self.game_map.is_goal_reached()
