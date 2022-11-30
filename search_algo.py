@@ -19,27 +19,49 @@ class SearchAlgo():
 
 
 class UniformCost(SearchAlgo):
+    def __init__(self, _initial_state:state.State, _heuristic:heuristic.Heuristic):
+        self.open_list = PriorityQueue()
+        self.visited_list = list()
+        self.heuristic = _heuristic
+        self.initial_state = _initial_state
+        self.move_list = {}
+
     def execute(self):
         # insert root node
-        self.open_list.put((0, self.initial_state))
-        # current_node = ""
-        
+        entry_count = 0
+        self.open_list.put((0, entry_count, {'new_state':self.initial_state.get_map().__str__()}))
+
         # until goal is reached check status
         while not self.open_list.empty():
             # pop
             node_tuple = self.open_list.get()
-            current_node = node_tuple[1]['new_state']
-            current_state = state.State(current_node)
+            current_node = node_tuple[2]
+            current_state = state.State(current_node['new_state'])
             current_cost = node_tuple[0]
             if current_state.is_goal_state():
                 # print info?
-                break 
-            elif current_node not in self.visited_list:
+                return self.gen_move_list(current_node)
+            elif current_node['new_state'] not in self.visited_list:
+                self.move_list[current_node['new_state']] = current_node
                 # enqueue children with cost
                 for child in current_state.get_move_list():
-                    self.open_list.put((current_cost+child['cost'], child))
+                    priority = current_cost+child['cost']
+                    entry_count +=1
+                    self.open_list.put((priority, entry_count, child))
                 
-                self.visited_list.append(current_node)
+                self.visited_list.append(current_node['new_state'])
+
+    def gen_move_list(self, finale_move):
+        move = finale_move
+        move_list = []
+        while True:
+            if move['parent'] == self.initial_state.get_map().__str__():
+                move_list.insert(0,move)
+                break
+            move_list.insert(0,move)
+            move = self.move_list[move['parent']]
+          
+        return move_list
 
 
     def get_path():

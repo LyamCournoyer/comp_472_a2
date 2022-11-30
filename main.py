@@ -10,10 +10,7 @@ def main():
     # heuristic_list.append(heuristic.h1())
     for game in state_list:
         run_a(state_list, [heuristic.h1])
-        pass
-    
-
-
+        run_ucs(state_list)
 
 def parse_input_file(file_path:str) -> list[state.State]:
     valid_lines = list[state.State]()
@@ -24,17 +21,21 @@ def parse_input_file(file_path:str) -> list[state.State]:
             line = line.strip()
             if(line and not line.startswith('#')):                
                 valid_lines.append(state.State(line))
-            
-
-    
     return valid_lines
-
 
 def run_a(state_list, heuristic_list):
     for _heuristic in heuristic_list:
         for item in state_list:            
             algo = search_algo.A(item, _heuristic)
             algo.execute()
+
+def run_ucs(state_list):
+    for item in state_list:
+        algo = search_algo.UniformCost(item, 0)
+        res = algo.execute()
+        print("solution found in " + str(len(res)) + " moves")
+
+
 
 if __name__ == "__main__":
     main()
