@@ -11,7 +11,7 @@ def main():
    
     run_ucs(state_list)
     run_gbfs(state_list, heuristic_list)
-    # run_a(state_list, heuristic_list)
+    run_a(state_list, heuristic_list)
 
 def parse_input_file(file_path:str) -> list[state.State]:
     valid_lines = list[state.State]()
