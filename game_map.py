@@ -55,8 +55,8 @@ class GameMap:
                             return False
         return True
 
-    def stripped_map_string(self, map_str):
-        return map_str[0:(self.x_len*self.y_len)]
+    def stripped_map_string(map_str):
+        return map_str[0:36]
 
     def __str__(self):
         # create an input map string  i.e AAABCDFEEBCDF.RRC.GGH....IH.KK.IJJLL

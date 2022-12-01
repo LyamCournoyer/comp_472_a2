@@ -1,11 +1,15 @@
 import abc;
 from queue import PriorityQueue
+import time
 import state
+import game_map
 import heuristic
 
 class SearchAlgo():
 
     def __init__(self, _initial_state:state.State, _heuristic:heuristic.Heuristic):
+        self.start_time = 0
+        self.end_time = 0
         self.open_list = PriorityQueue()
         self.closed_list =  list[state.State]
         self.visited_list = list[state.State]
@@ -19,6 +23,8 @@ class SearchAlgo():
 
 class UniformCost(SearchAlgo):
     def __init__(self, _initial_state:state.State):
+        self.start_time = 0
+        self.end_time = 0
         self.open_list = PriorityQueue()
         self.visited_list = list()
         self.initial_state = _initial_state
@@ -26,20 +32,23 @@ class UniformCost(SearchAlgo):
         self.state_count = 0
 
     def execute(self):
+        self.start_time = time.time()
         # insert root node
         entry_count = 0
         self.open_list.put((0, entry_count, {'new_state':self.initial_state.get_map().__str__()}))
 
         # until goal is reached check status
         while not self.open_list.empty():
-            # pop
+            # pop & setup info needed
             node_tuple = self.open_list.get()
             current_node = node_tuple[2]
             current_state = state.State(current_node['new_state'])
             current_cost = node_tuple[0]
-            current_state_str = current_state.game_map.stripped_map_string(current_node['new_state'])
+            current_state_str = game_map.GameMap.stripped_map_string(current_node['new_state'])
+
             if current_state.is_goal_state():
-                # print info?
+                # Solution found
+                self.end_time = time.time()
                 return self.gen_move_list(current_node)
             elif current_state_str not in self.visited_list:
                 self.move_list[current_node['new_state']] = current_node
@@ -50,6 +59,9 @@ class UniformCost(SearchAlgo):
                     self.open_list.put((priority, entry_count, child))
                 
                 self.visited_list.append(current_state_str)
+        
+        # No solution
+        self.end_time = time.time()
 
     def gen_move_list(self, finale_move):
         move = finale_move
@@ -68,6 +80,8 @@ class UniformCost(SearchAlgo):
 
 class GreedyBestFirst(SearchAlgo):
     def __init__(self, _initial_state:state.State, _heuristic:heuristic.Heuristic):
+        self.start_time = 0
+        self.end_time = 0
         self.open_list = PriorityQueue()
         self.visited_list = list()
         self.initial_state = _initial_state
@@ -75,6 +89,7 @@ class GreedyBestFirst(SearchAlgo):
         self.move_list = {}
 
     def execute(self):
+        self.start_time = time.time()
         # root node
         entry_count = 0
         self.open_list.put((0, entry_count, {'new_state':self.initial_state.get_map().__str__()}))
@@ -86,7 +101,8 @@ class GreedyBestFirst(SearchAlgo):
             current_state = state.State(current_node['new_state'])
             current_state_str = current_state.game_map.stripped_map_string(current_node['new_state'])
             if current_state.is_goal_state():
-                # print info?
+                # Solution found
+                self.end_time = time.time()
                 return self.gen_move_list(current_node)
             elif current_state_str not in self.visited_list:
                 self.move_list[current_node['new_state']] = current_node
@@ -115,6 +131,8 @@ class GreedyBestFirst(SearchAlgo):
 
 class  A(SearchAlgo):
     def __init__(self, _initial_state:state.State, _heuristic:heuristic.Heuristic):
+        self.start_time = 0
+        self.end_time = 0
         self.name = "a"
         self.open_list = {}
         self.closed_list =  {}

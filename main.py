@@ -1,5 +1,6 @@
 import state
 import game_map
+import output
 import search_algo
 import heuristic
 
@@ -33,14 +34,20 @@ def run_ucs(state_list):
     for item in state_list:
         algo = search_algo.UniformCost(item)
         res = algo.execute()
-        print("solution found in " + str(len(res)) + " moves")
+        
+        result_file = output.SolutionFile(item, algo, res) 
+        result_file.generate_file()
+    
+
 
 def run_gbfs(state_list, heuristic_list):
     for item in state_list:
         for _heuristic in heuristic_list:
             algo = search_algo.GreedyBestFirst(item, _heuristic)
             res = algo.execute()
-            print("solution found in " + str(len(res)) + " moves")
+
+            result_file = output.SolutionFile(item, algo, res) 
+            result_file.generate_file()
 
 if __name__ == "__main__":
     main()
