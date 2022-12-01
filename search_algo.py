@@ -15,7 +15,7 @@ class SearchAlgo():
         self.visited_list = list[state.State]
         self.heuristic = _heuristic
         self.initial_state = _initial_state
-        #other variables to store performance
+        self.state_count = 0
 
     @abc.abstractmethod
     def execute(self):
@@ -31,7 +31,7 @@ class UniformCost(SearchAlgo):
         self.move_list = {}
         self.state_count = 0
 
-    def execute(self):
+    def execute(self, search_file):
         self.start_time = time.time()
         # insert root node
         entry_count = 0
@@ -45,7 +45,12 @@ class UniformCost(SearchAlgo):
             current_state = state.State(current_node['new_state'])
             current_cost = node_tuple[0]
             current_state_str = game_map.GameMap.stripped_map_string(current_node['new_state'])
+            
+            # Log as state being searched
+            self.state_count+=1
+            search_file.format_state(current_cost, 0, current_state)
 
+            # Check state
             if current_state.is_goal_state():
                 # Solution found
                 self.end_time = time.time()
@@ -87,8 +92,9 @@ class GreedyBestFirst(SearchAlgo):
         self.initial_state = _initial_state
         self.heuristic = _heuristic
         self.move_list = {}
+        self.state_count = 0
 
-    def execute(self):
+    def execute(self, search_file):
         self.start_time = time.time()
         # root node
         entry_count = 0
@@ -98,8 +104,14 @@ class GreedyBestFirst(SearchAlgo):
             # pop
             node_tuple = self.open_list.get()
             current_node = node_tuple[2]
+            hn = node_tuple[0]
             current_state = state.State(current_node['new_state'])
-            current_state_str = current_state.game_map.stripped_map_string(current_node['new_state'])
+            current_state_str = game_map.GameMap.stripped_map_string(current_node['new_state'])
+            
+            # Log as state being searched
+            self.state_count+=1
+            search_file.format_state(0, hn, current_state)
+
             if current_state.is_goal_state():
                 # Solution found
                 self.end_time = time.time()
@@ -127,7 +139,7 @@ class GreedyBestFirst(SearchAlgo):
         return move_list
 
     def __str__(self):
-        return str('gbfs')+self.heuristic.__str__() 
+        return f'gbfs-{self.heuristic.__str__()}'
 
 class  A(SearchAlgo):
     def __init__(self, _initial_state:state.State, _heuristic:heuristic.Heuristic):
@@ -142,14 +154,21 @@ class  A(SearchAlgo):
         self.initial_state = _initial_state        
         self.g_score[_initial_state.get_map().__str__()] = 0
         self.open_list[_initial_state.get_map().__str__()] = self.heuristic.get_heuristic(_initial_state.get_map())
+        self.state_count = 0
       
-    def execute(self):
+    def execute(self, search_file):
+        self.start_time = time.time()
         while self.open_list:
             self.open_list = {k: v for k, v in sorted(self.open_list.items(), key=lambda item: item[1])}
             current_state_str = next(iter(self.open_list))            
-            self.open_list.pop(current_state_str)
+            fn = self.open_list.pop(current_state_str)
             current_state = state.State(current_state_str)
+
+            self.state_count += 1
+            gn = self.g_score[current_state_str]
+            search_file.format_state(gn, fn-gn, current_state)
             if current_state.get_map().is_goal_reached():
+                self.end_time = time.time()
                 return self.gen_move_list(self.move_list[current_state_str])
             for move in current_state.get_move_list():
                 tmp_g_score = self.g_score[current_state_str] + move['cost']
@@ -162,6 +181,8 @@ class  A(SearchAlgo):
                     self.move_list[move['new_state']] = move
                     self.g_score[move['new_state']] = tmp_g_score
                     self.open_list[move['new_state']] = tmp_g_score + self.heuristic.get_heuristic(state.State(move['new_state']).get_map())
+       
+        self.end_time = time.time()
         return None
                     
     def gen_move_list(self, finale_move):

@@ -1,8 +1,8 @@
 import abc
+import os
 import search_algo
 import state
 import game_map
-import heuristic
 
 class OutputFile(abc.ABC):
     puzzle_number = 1
@@ -13,20 +13,25 @@ class OutputFile(abc.ABC):
 
 class SearchFile(OutputFile):
     
-    def __init__(self, _initial_state:state.State, _search:search_algo.SearchAlgo):
-        self.filename = _search.__str__() + str(OutputFile.puzzle_number)
+    def __init__(self, _search:search_algo.SearchAlgo):
+        self.filename = f'output_files/search/{_search.__str__()}-search-{str(OutputFile.puzzle_number)}.txt'
+        self.search_str = f''
+
+    def format_state(self, gn, hn, _state:state.State):
+        fn = gn+hn
+        self.search_str += f'{fn} {gn} {hn} {_state.get_map().__str__()}\n'
 
     def generate_file(self):
+        os.makedirs(os.path.dirname(self.filename), exist_ok=True)
         with open(self.filename, 'w') as f:
-            pass
+            f.write(self.search_str)
         
 
 
 class SolutionFile(OutputFile):
    
     def __init__(self, _initial_state:state.State, _search:search_algo.SearchAlgo, _solution:list = None):
-        self.filename = f'{_search.__str__()}-sol-{str(OutputFile.puzzle_number)}'
-        OutputFile.puzzle_number+=1
+        self.filename = f'output_files/solution/{_search.__str__()}-sol-{str(OutputFile.puzzle_number)}.txt'
         self.initial_state = _initial_state
         self.solution_list = _solution
         self.search = _search
@@ -34,12 +39,8 @@ class SolutionFile(OutputFile):
     def generate_file(self):
         map = self.initial_state.get_map()
         map_conf = map.gen_map_2darray()
+        os.makedirs(os.path.dirname(self.filename), exist_ok=True)
         with open(self.filename, 'w') as f:
-            # Case no solution
-            if self.solution_list is None:
-                f.write('No solution')
-                return
-
             # Initial configuration
             f.write(f'Initial board configuration: {map.__str__()}')
             f.write('\n\n')
@@ -52,10 +53,15 @@ class SolutionFile(OutputFile):
             for car in map.vehicle_list:
                 f.write(f'{car.name}:{car.gas}, ')
 
+            # Case no solution
+            if self.solution_list is None:
+                f.write('\n\nNo solution!')
+                return
+
             # Solution info
             f.write('\n\n')
             f.write(f'Runtime: {round((self.search.end_time-self.search.start_time), 3)} seconds\n')
-            f.write(f'Search path length: \n')
+            f.write(f'Search path length: {self.search.state_count}\n')
             f.write(f'Solution path length: {len(self.solution_list)}\n')
             solution_str = 'Solution Path: '
             solution_states_str = ''
