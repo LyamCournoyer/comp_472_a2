@@ -82,15 +82,10 @@ class  A(SearchAlgo):
                 return self.gen_move_list(self.move_list[current_state_str])
             for move in current_state.get_move_list():
                 tmp_g_score = self.g_score[current_state_str] + move['cost']
-                if (move['new_state'].split()[0] in self.g_score.keys() and tmp_g_score < self.g_score[move['new_state'].split()[0]]):
+                if (move['new_state'].split()[0] in self.g_score.keys() and tmp_g_score < self.g_score[move['new_state'].split()[0]]) or move['new_state'].split()[0] not in self.g_score.keys():
                         self.move_list[move['new_state'].split()[0]] = move
                         self.g_score[move['new_state'].split()[0]] = tmp_g_score
-                        self.open_list[move['new_state'].split()[0]] = tmp_g_score + self.heuristic.get_heuristic(state.State(move['new_state']).get_map())
-                if move['new_state'].split()[0] not in self.g_score.keys():
-                    self.move_list[move['new_state'].split()[0]] = move
-                    self.g_score[move['new_state'].split()[0]] = tmp_g_score
-                    self.open_list[move['new_state'].split()[0]] = tmp_g_score + self.heuristic.get_heuristic(state.State(move['new_state']).get_map())
-
+                        self.open_list[move['new_state'].split()[0]] = tmp_g_score + self.heuristic.get_heuristic(state.State(move['new_state']).get_map())           
                     
         return None
                     
