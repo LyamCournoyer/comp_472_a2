@@ -59,8 +59,9 @@ class State:
             for vehicle_to_move in self.game_map.vehicle_list:
                 if self.game_map.can_vehicle_move(vehicle_to_move.name, spaces_to_move):
                     move = {}
-                    move['vehicle_name:'] = vehicle_to_move.name
-                    move['directrion'] = vehicle_to_move.move_dir_to_str(spaces_to_move)
+                    move['vehicle_name'] = vehicle_to_move.name
+                    move['gas_left'] = vehicle_to_move.gas - abs(spaces_to_move)
+                    move['direction'] = vehicle_to_move.move_dir_to_str(spaces_to_move)
                     move['times'] = spaces_to_move
                     move['new_state'] = self.gen_state_with_new_vehicle_pos(vehicle_to_move, spaces_to_move)
                     move['parent'] = self.get_map().__str__()
@@ -91,7 +92,10 @@ class State:
     def vehicle_can_leave(self, v:vehicle.Vehicle):
         for pos in v.get_positions():
             # Vehicle must be at exit and move left/right
-            if pos == State.EXIT_POSITION and v.determine_move_direction == [1,0]:
+            if pos == State.EXIT_POSITION and v.determine_move_direction == [1,0] and v.get_name() != "A":
                 return True
 
         return False 
+
+    def is_goal_state(self):
+        return self.game_map.is_goal_reached()
