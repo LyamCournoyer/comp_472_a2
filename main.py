@@ -8,9 +8,9 @@ def main():
     state_list = parse_input_file(input_file)
     # heuristic_list = list[heuristic.Heuristic]
     # heuristic_list.append(heuristic.h1())
-    for game in state_list:
-        run_a(state_list, [heuristic.h1])
-        pass
+    
+    run_a(state_list, [heuristic.h1])
+    
     
 
 
