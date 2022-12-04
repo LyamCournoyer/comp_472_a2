@@ -3,11 +3,16 @@ import game_map
 import output
 import search_algo
 import heuristic
+import argparse
 
 def main():
-    input_file = "sample_files\Sample\sample-input.txt"
+
+    parser = argparse.ArgumentParser()    
+    parser.add_argument("-input-file", help="path to the input file", default="input_files\\random_maps.txt")
+    args = parser.parse_args()
+    input_file = args.input_file
     state_list = parse_input_file(input_file)
-    heuristic_list = [heuristic.h1, heuristic.h2, heuristic.h3]
+    heuristic_list = [heuristic.h1, heuristic.h2, heuristic.h3, heuristic.h4]
    
     run_ucs(state_list)
     run_gbfs(state_list, heuristic_list)

@@ -99,3 +99,9 @@ class State:
 
     def is_goal_state(self):
         return self.game_map.is_goal_reached()
+
+    def get_ambo_gas(self):
+        for v in self.vehicle_list:
+            if v.name == 'A':
+                return v.gas
+        

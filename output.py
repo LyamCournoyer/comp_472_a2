@@ -55,7 +55,8 @@ class SolutionFile(OutputFile):
 
             # Case no solution
             if self.solution_list is None:
-                f.write('\n\nNo solution!')
+                f.write('\n\nNo solution!\n')
+                f.write(f'Runtime: {round((self.search.end_time-self.search.start_time), 3)} seconds\n')
                 return
 
             # Solution info
