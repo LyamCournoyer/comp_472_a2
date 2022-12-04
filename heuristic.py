@@ -47,3 +47,10 @@ class h3(Heuristic):
         
     def __str__():
         return str('h3')
+
+class h4(Heuristic):
+    def get_heuristic(game_map:game_map.GameMap):        
+        return 0
+        
+    def __str__():
+        return 'h4'

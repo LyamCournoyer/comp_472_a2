@@ -4,7 +4,13 @@ import time
 import state
 import game_map
 import heuristic
-
+INITIAL_MOVE = {}
+INITIAL_MOVE['vehicle_name'] = 'A'
+#INITIAL_MOVE['gas_left'] = 100
+INITIAL_MOVE['direction'] = 'None'
+INITIAL_MOVE['times'] = 0
+#INITIAL_MOVE['new_state'] = self.gen_state_with_new_vehicle_pos(vehicle_to_move, spaces_to_move)
+INITIAL_MOVE['parent'] = None
 class SearchAlgo():
 
     def __init__(self, _initial_state:state.State, _heuristic:heuristic.Heuristic):
@@ -35,7 +41,9 @@ class UniformCost(SearchAlgo):
         self.start_time = time.time()
         # insert root node
         entry_count = 0
-        self.open_list.put((0, entry_count, {'new_state':self.initial_state.get_map().__str__()}))
+        INITIAL_MOVE['gas_left'] = self.initial_state.get_ambo_gas()
+        INITIAL_MOVE['new_state'] = self.initial_state.get_map().__str__()
+        self.open_list.put((0, entry_count, INITIAL_MOVE))
 
         # until goal is reached check status
         while not self.open_list.empty():
@@ -72,7 +80,7 @@ class UniformCost(SearchAlgo):
         move = finale_move
         move_list = []
         while True:
-            if move['parent'] == self.initial_state.get_map().__str__():
+            if not move['parent'] or move['parent'] == self.initial_state.get_map().__str__():
                 move_list.insert(0,move)
                 break
             move_list.insert(0,move)
@@ -98,7 +106,9 @@ class GreedyBestFirst(SearchAlgo):
         self.start_time = time.time()
         # root node
         entry_count = 0
-        self.open_list.put((0, entry_count, {'new_state':self.initial_state.get_map().__str__()}))
+        INITIAL_MOVE['gas_left'] = self.initial_state.get_ambo_gas()
+        INITIAL_MOVE['new_state'] = self.initial_state.get_map().__str__()
+        self.open_list.put((0, entry_count, INITIAL_MOVE))
 
         while not self.open_list.empty():
             # pop
@@ -125,12 +135,13 @@ class GreedyBestFirst(SearchAlgo):
                     self.open_list.put((priority, entry_count, child))
                 
                 self.visited_list.append(current_state_str)
-
+        self.end_time = time.time()
+        return None
     def gen_move_list(self, finale_move):
         move = finale_move
         move_list = []
         while True:
-            if move['parent'] == self.initial_state.get_map().__str__():
+            if not move['parent'] or move['parent'] == self.initial_state.get_map().__str__():
                 move_list.insert(0,move)
                 break
             move_list.insert(0,move)
@@ -153,8 +164,10 @@ class  A(SearchAlgo):
         self.heuristic = _heuristic
         self.initial_state = _initial_state        
         self.g_score[_initial_state.get_map().__str__().split()[0]] = 0
+        INITIAL_MOVE['gas_left'] = self.initial_state.get_ambo_gas()
+        INITIAL_MOVE['new_state'] = self.initial_state.get_map().__str__()
         self.open_list[_initial_state.get_map().__str__().split()[0]] = self.heuristic.get_heuristic(_initial_state.get_map())
-        self.move_list[_initial_state.get_map().__str__().split()[0]] = {'new_state': _initial_state.get_map().__str__(), 'cost':0, 'parent':None}
+        self.move_list[_initial_state.get_map().__str__().split()[0]] = INITIAL_MOVE
         self.state_count = 0
       
     def execute(self, search_file):
@@ -179,14 +192,14 @@ class  A(SearchAlgo):
                         self.move_list[move['new_state'].split()[0]] = move
                         self.g_score[move['new_state'].split()[0]] = tmp_g_score
                         self.open_list[move['new_state'].split()[0]] = tmp_g_score + self.heuristic.get_heuristic(state.State(move['new_state']).get_map())           
-                    
+        self.end_time = time.time()           
         return None
                     
     def gen_move_list(self, finale_move):
         move = finale_move
         move_list = []
         while True:
-            if move['parent'] == self.initial_state.get_map().__str__():
+            if not move['parent'] or move['parent'] == self.initial_state.get_map().__str__():
                 move_list.insert(0,move)
                 break
             move_list.insert(0,move)
@@ -195,6 +208,6 @@ class  A(SearchAlgo):
         return move_list
 
     def __str__(self):
-        return str('a')+self.heuristic.__str__()
+        return str('a-')+self.heuristic.__str__()
     
         
